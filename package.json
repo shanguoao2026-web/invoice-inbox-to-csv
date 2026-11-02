@@ -1,0 +1,53 @@
+{
+  "name": "invoice-inbox-to-csv",
+  "version": "0.1.0",
+  "description": "Convert a folder of PDF invoices into CSV files for Xero and QuickBooks Online.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "invoice-inbox-to-csv": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=20.16"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && chmod +x dist/cli.js",
+    "fixtures": "tsx scripts/generate-fixtures.ts",
+    "pretest": "npm run fixtures && npm run build && tsc -p tsconfig.test.json --noEmit",
+    "test": "node --import tsx --test --test-reporter spec test/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json --noEmit",
+    "prepack": "npm run build"
+  },
+  "keywords": [
+    "invoice",
+    "pdf",
+    "csv",
+    "xero",
+    "quickbooks",
+    "cli"
+  ],
+  "dependencies": {
+    "pdfjs-dist": "^5.4.296"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/pdfkit": "^0.17.7",
+    "pdfkit": "^0.20.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+coverage/
+.DS_Store
+out/
+fixtures/*.pdf
+*.log
+.invoice-inbox-state.json
+dist-test/
+grok-build.log
