@@ -54,12 +54,12 @@ Stop the watcher with Ctrl+C.
 
 The tool reads the PDF text with [PDF.js](https://github.com/mozilla/pdf.js) (`pdfjs-dist`). It does not render pages, so it does not need a native canvas addon. `@napi-rs/canvas` is only an optional dependency of PDF.js; if that install fails, text extraction still runs. The parser then looks for common English invoice wording:
 
-- Supplier: letterhead with a company suffix (`Ltd`, `Inc`, `GmbH`, `Co`, …), or a `Bill From` / `Supplier` / `Vendor` / `From` line. `Bill To` is the customer and is not used as the contact.
-- `Invoice Number`, `Invoice No`, `Invoice #`, `Inv #`, `Bill Number`.
+- Supplier: a letterhead name (a company suffix such as `Ltd`, `Inc`, `GmbH`, or `Co`, a trade word such as `Stationers` or `Studio`, or two or more capitalised words), or a `Bill From` / `Supplier` / `Vendor` / `From` line. A line that is only `A fictional company` or `SPECIMEN` is skipped when a real name is present. `Bill To` is the customer and is not used as the contact.
+- `Invoice Number`, `Invoice No`, `Invoice #`, `Inv #`, `Bill Number`. A colon after the label is optional when the value is separated by space and contains a digit.
 - `Invoice Date`, `Date of Issue`, `Issue Date`, or a plain `Date`.
 - `Due Date`, `Payment Due`, `Pay By`, or `Due`.
-- `Currency` as an ISO code (`NZD`, `USD`, `EUR`, …). `€`, `£`, `¥`, `NZ$`, `A$`, `C$`, and `US$` count. A bare `$` does not, because several currencies share it.
-- `Subtotal`, `GST` / `VAT` / `Sales Tax` (with an optional percent), and `Total` / `Amount Due`.
+- `Currency` as an ISO code (`NZD`, `USD`, `EUR`, `INR`, …). `€`, `£`, `¥`, `₹`, `NZ$`, `A$`, `C$`, and `US$` count. A bare `$` does not, because several currencies share it.
+- `Subtotal`, `GST` / `VAT` / `Sales Tax` (with an optional percent, with or without a colon), and `Total` / `Amount Due` / `Total due`. Summary rows are not exported as products.
 - Line items shaped like `Description  Qty  Unit Price  Amount`, or a description plus a single amount.
 
 Amounts may use `1,234.56` or `1.234,56`. Dates may be `15 March 2024`, `March 3, 2026`, `2026-01-20`, `15/04/2024`, or `04/15/2024`. When both numbers are 12 or less (`03/04/2026`), the day is assumed to come first unless you pass `--date-format mdy`.

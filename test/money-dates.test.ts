@@ -20,6 +20,14 @@ describe("parseMoney", () => {
     assert.equal(parseMoney("400", { allowInteger: true }), 400);
   });
 
+  test("reads Indian rupee amounts and European thousands", () => {
+    assert.equal(parseMoney("₹14,702.00"), 14702);
+    assert.equal(parseMoney("₹2,646.36"), 2646.36);
+    assert.equal(parseMoney("₹17,348.36"), 17348.36);
+    assert.equal(parseMoney("1.390,00"), 1390);
+    assert.equal(parseMoney("264,10"), 264.1);
+  });
+
   test("parses quantities and leaves zero out", () => {
     assert.equal(parseQuantity("2"), 2);
     assert.equal(parseQuantity("2.5"), 2.5);
@@ -46,6 +54,13 @@ describe("currency", () => {
     assert.equal(inferCurrency(["Total: $100.00"]), null);
     assert.equal(inferCurrency(["Total: €100.00"]), "EUR");
     assert.equal(inferCurrency(["Currency: NZD", "Total: 10.00"]), "NZD");
+  });
+
+  test("reads the rupee sign as INR", () => {
+    assert.equal(parseCurrencyLabel("₹"), "INR");
+    assert.equal(parseCurrencyLabel("Indian Rupee"), "INR");
+    assert.equal(inferCurrency(["Total due ₹17,348.36"]), "INR");
+    assert.equal(inferCurrency(["Subtotal ₹14,702.00", "GST at 18% ₹2,646.36"]), "INR");
   });
 });
 

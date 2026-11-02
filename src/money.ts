@@ -21,11 +21,11 @@ export function parseMoney(raw: string, options: ParseMoneyOptions = {}): number
   }
 
   source = source.replace(
-    /^(?:USD|EUR|GBP|AUD|CAD|NZD|CHF|JPY|SEK|NOK|DKK|ZAR|SGD|HKD|CNY|INR|MXN|US\$|NZ\$|AU\$|A\$|CA\$|C\$|\$|€|£|¥)\s*/i,
+    /^(?:USD|EUR|GBP|AUD|CAD|NZD|CHF|JPY|SEK|NOK|DKK|ZAR|SGD|HKD|CNY|INR|MXN|US\$|NZ\$|AU\$|A\$|CA\$|C\$|\$|€|£|¥|₹)\s*/i,
     "",
   );
   source = source.replace(
-    /\s*(?:USD|EUR|GBP|AUD|CAD|NZD|CHF|JPY|SEK|NOK|DKK|ZAR|SGD|HKD|CNY|INR|MXN)$/i,
+    /\s*(?:USD|EUR|GBP|AUD|CAD|NZD|CHF|JPY|SEK|NOK|DKK|ZAR|SGD|HKD|CNY|INR|MXN|₹|€|£|¥|\$)$/i,
     "",
   );
   source = source.replace(/\s+/g, "");
@@ -116,6 +116,10 @@ const CURRENCY_NAMES: Record<string, string> = {
   "australian dollars": "AUD",
   "canadian dollar": "CAD",
   "canadian dollars": "CAD",
+  rupee: "INR",
+  rupees: "INR",
+  "indian rupee": "INR",
+  "indian rupees": "INR",
 };
 
 const KNOWN_CURRENCY_SET = new Set<string>(KNOWN_CURRENCIES);
@@ -139,7 +143,7 @@ export function parseCurrencyLabel(raw: string): string | null {
  */
 export function inferCurrency(lines: string[]): string | null {
   const interesting = lines.filter((line) =>
-    /currency|total|subtotal|amount|gst|vat|tax|price|due|€|£|¥|\$/i.test(line),
+    /currency|total|subtotal|amount|gst|vat|tax|price|due|€|£|¥|₹|\$/i.test(line),
   );
   const found = new Set<string>();
   const blob = interesting.join("\n");
@@ -153,6 +157,7 @@ export function inferCurrency(lines: string[]): string | null {
   if (blob.includes("€")) found.add("EUR");
   if (blob.includes("£")) found.add("GBP");
   if (blob.includes("¥")) found.add("JPY");
+  if (blob.includes("₹")) found.add("INR");
 
   for (const code of KNOWN_CURRENCIES) {
     if (new RegExp(`\\b${code}\\b`).test(blob)) found.add(code);
@@ -168,6 +173,7 @@ export function inferCurrency(lines: string[]): string | null {
       if (code === "EUR" && line.includes("€")) return code;
       if (code === "GBP" && line.includes("£")) return code;
       if (code === "JPY" && line.includes("¥")) return code;
+      if (code === "INR" && line.includes("₹")) return code;
       if (code === "NZD" && /NZ\$/i.test(line)) return code;
       if (code === "AUD" && /AU\$|A\$/i.test(line)) return code;
       if (code === "CAD" && /CA\$|C\$/i.test(line)) return code;
@@ -185,5 +191,6 @@ function currencyFromSymbols(raw: string): string | null {
   if (raw.includes("€")) return "EUR";
   if (raw.includes("£")) return "GBP";
   if (raw.includes("¥")) return "JPY";
+  if (raw.includes("₹")) return "INR";
   return null;
 }

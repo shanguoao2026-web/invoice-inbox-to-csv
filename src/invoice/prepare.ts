@@ -108,7 +108,7 @@ export function prepareInvoice(
     errors.push({
       field: "vendor",
       message:
-        "Supplier name is required. Use a letterhead with a company suffix, or a Bill From / Supplier / Vendor label.",
+        "Supplier name is required. Use a letterhead name, or a Bill From / Supplier / Vendor label.",
     });
   }
   if (!draft.invoiceNumber) {
